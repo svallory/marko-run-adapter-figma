@@ -1,0 +1,82 @@
+<h1 align="center">
+  <!-- Logo -->
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/marko-js/run/raw/main/assets/marko-run-darkmode.png">
+    <source media="(prefers-color-scheme: light)" srcset="https://github.com/marko-js/run/raw/main/assets/marko-run.png">
+    <img alt="Marko Run Logo" src="https://github.com/marko-js/run/raw/main/assets/marko-run.png" width="400">
+  </picture>
+  <br/>
+  @marko-polo/run-adapter-figma
+ <br/>
+</h1>
+
+Preview and deploy [@marko/run](https://github.com/marko-js/run) apps as static files
+
+## Intallation
+
+```sh
+npm install @marko-polo/run-adapter-figma
+```
+
+## Usage
+
+In your application's Vite config file (eg. `vite.config.js`), import and register this adapter with the `@marko/run` Vite plugin:
+
+```ts
+import { defineConfig } from "vite";
+import marko from "@marko/run/vite";
+import figmaAdapter from "@marko/run-adapter-figma";
+
+export default defineConfig({
+  plugins: [
+    marko({
+      adapter: figmaAdapter()
+    })
+  ]
+});
+```
+
+## Contributing
+
+### Tooling
+
+To improve and automate the developer experience, the following tooling has been automatically
+installed and [pre-configured using moonrepo presets](https://github.com/moonrepo/dev).
+
+- [Babel](https://babeljs.io/) for transpiling, configured with
+  [babel-preset-moon](https://www.npmjs.com/package/babel-preset-moon).
+- [ESLint](https://eslint.org/) for linting, configured with
+  [eslint-config-moon](https://www.npmjs.com/package/eslint-config-moon).
+- [Prettier](https://prettier.io/) for code formatting, configured with
+  [prettier-config-moon](https://www.npmjs.com/package/prettier-config-moon).
+- [Rollup](https://rollupjs.org) for bundling and distributing, configured dynamically with
+  Packemon.
+- [TypeScript](https://www.typescriptlang.org/) for type checking, configured with
+  [tsconfig-moon](https://www.npmjs.com/package/tsconfig-moon).
+
+Feel free to use the configuration as-is, or to modify, or to not use moon, the choice is yours!
+
+### Commands
+
+The tooling mentioned above can be ran with the following yarn/npm scripts. For example,
+`yarn run build`.
+
+#### Build & deploy
+
+- `build` - Build the package(s) with Packemon. Useful for development, as it will only build
+  JavaScript targets. Use `pack` for distribution.
+- `clean` - Clean all output targets that were built with Packemon.
+- `pack` - Clean, build, and validate the package(s) with Packemon. Designed for production and
+  should be ran before a release.
+- `release` - Pack the package(s), run test checks, and publish to npm! _(Release script not
+  configured by Packemon)_
+- `validate` - Validate the package(s), ensuring their `package.json` is defined correctly.
+- `watch` - Watch for file changes and rebuild the target package. Useful for development.
+
+#### Development & testing
+
+- `check` - Run the type checker, linter, and testing suite all at once.
+- `format` - Run Prettier and format all files in the project.
+- `lint` - Run the linter with ESLint.
+- `test`, `coverage` - Run the unit testing suite with Vitest, and optionally with code coverage.
+- `type` - Run the type checker with TypeScript.

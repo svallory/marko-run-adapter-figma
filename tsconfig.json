@@ -1,0 +1,11 @@
+// https://www.npmjs.com/package/tsconfig-moon
+{
+  "extends": "tsconfig-moon/tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "types": [
+      "vitest/importMeta"
+    ]
+  },
+  "include": ["src/**/*", "tests/**/*", "types/**/*", "playground"]
+}

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A basic Marko app.">
+  <title>${$global.meta.pageTitle || 'Marko'}</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <script src="https://esm.sh/class-variance-authority@0.7.0"></script>
+  <script src="/js/static/script.js"></script>
+  <script src="/js/static/script2.js"></script>
+</head>
+<body>
+  <${input.renderBody}/>
+  <script>
+    console.log('LOADED SCRIPTS:', window['test:scripts'])
+  </script>
+</body>
+</html>
+
+style {
+  html, body {
+    font-family: system-ui;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    color: #fff;
+    background: #15151e;
+  }
+  code {
+    color: #fc0;
+  }
+  a {
+    color: #09c;
+  }
+}

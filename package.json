@@ -1,0 +1,63 @@
+{
+  "name": "@marko-polo/run-adpter-figma",
+  "infra": "polyrepo",
+  "scripts": {
+    "build": "packemon build",
+    "check": "pnpm run type && pnpm run test && pnpm run lint",
+    "clean": "packemon clean",
+    "coverage": "pnpm run test --coverage",
+    "format": "prettier --write ./src ./tests",
+    "lint": "eslint --cache --fix ./src ./tests",
+    "pack": "packemon pack --addEngines --declaration",
+    "prelease": "pnpm run pack && pnpm run check",
+    "release": "echo 'Customize your own release script!'",
+    "test": "vitest",
+    "type": "tsc && tsc -p ./tests",
+    "validate": "packemon validate",
+    "watch": "packemon watch"
+  },
+  "devDependencies": {
+    "@types/html-minifier-terser": "^7.0.2",
+    "@types/node": "^20.12.7",
+    "eslint": "^9.0.0",
+    "eslint-config-moon": "^3.0.0",
+    "packemon": "^4.0.1",
+    "prettier": "^3.2.5",
+    "prettier-config-moon": "^1.1.2",
+    "tsconfig-moon": "^1.3.0",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.8",
+    "vitest": "^1.5.0"
+  },
+  "version": "0.0.0",
+  "description": "",
+  "keywords": [],
+  "author": "Saulo Vallory",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/svallory/marko-run-adapter-figma"
+  },
+  "packemon": {
+    "platform": "node",
+    "format": "mjs"
+  },
+  "main": "./mjs/index.mjs",
+  "module": "./esm/index.js",
+  "files": [
+    "mjs/**/*",
+    "src/**/*"
+  ],
+  "dependencies": {
+    "@marko/run": "^0.4.4",
+    "@marko/run-adapter-static": "^0.1.6",
+    "@vituum/vite-plugin-posthtml": "^1.1.0",
+    "fast-glob": "^3.3.2",
+    "html-minifier-terser": "^7.2.0",
+    "htmlparser2": "^9.1.0",
+    "posthtml": "^0.16.6",
+    "posthtml-inline-assets": "^3.1.0",
+    "rollup-plugin-posthtml": "^1.1.0",
+    "uglify-js": "^3.17.4"
+  }
+}

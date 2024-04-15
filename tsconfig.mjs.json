@@ -1,0 +1,11 @@
+// https://www.npmjs.com/package/tsconfig-moon
+{
+  "extends": "tsconfig-moon/tsconfig.json",
+  "compilerOptions": {
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "mjs",
+    "rootDir": "src"
+  },
+  "include": ["src/**/*", "types/**/*"]
+}
