@@ -1,6 +1,7 @@
 {
   "name": "@marko-polo/run-adpter-figma",
   "infra": "polyrepo",
+  "type": "module",
   "scripts": {
     "build": "packemon build",
     "check": "pnpm run type && pnpm run test && pnpm run lint",
@@ -14,7 +15,8 @@
     "test": "vitest",
     "type": "tsc && tsc -p ./tests",
     "validate": "packemon validate",
-    "watch": "packemon watch"
+    "watch": "packemon watch",
+    "test:parser": "vitest src/lib/htmlparser2.ts"
   },
   "devDependencies": {
     "@types/html-minifier-terser": "^7.0.2",
@@ -52,6 +54,8 @@
     "@marko/run": "^0.4.4",
     "@marko/run-adapter-static": "^0.1.6",
     "@vituum/vite-plugin-posthtml": "^1.1.0",
+    "cheerio": "1.0.0-rc.12",
+    "dom-serializer": "^2.0.0",
     "fast-glob": "^3.3.2",
     "html-minifier-terser": "^7.2.0",
     "htmlparser2": "^9.1.0",

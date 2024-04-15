@@ -2,18 +2,13 @@
 /// <reference types="vitest" />
 import { defineConfig } from 'vite'
 
-const fixture = (name: string) => {
-  return name;
-}
-
 export default defineConfig({
   test: {
-    includeSource: ['src/**/*.ts'],
+    includeSource: ['**/*.ts'],
   },
-  define: { 
+  define: {
     'import.meta.vitest': 'undefined',
-    'import.meta.root': __dirname, 
-    'import.meta.fixture': fixture, 
+    'import.meta.root': `"${__dirname}"`
   },
   root: "src",
   build: {

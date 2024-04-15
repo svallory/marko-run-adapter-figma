@@ -119,10 +119,10 @@ build-storybook.log
 
 # Packemon build folders
 coverage/
-build/
-cjs/
-dts/
-esm/
-lib/
-mjs/
-umd/
+/build
+/cjs
+/dts
+/esm
+/lib
+/mjs
+/umd
