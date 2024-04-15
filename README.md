@@ -10,7 +10,24 @@
  <br/>
 </h1>
 
-Preview and deploy [@marko/run](https://github.com/marko-js/run) apps as static files
+### Build Figma Plugins using [@marko/run](https://github.com/marko-js/run) {align=center}
+
+## How it Works
+
+As you probably know, Figma plugin pages need to embed all assets. You cannot make requests from the UI to the plugin's main thread to get additional assets.
+
+Here's what this adapter does:
+
+1. Builds your plugin using the [static adapter](https://github.com/marko-js/run/blob/main/packages/adapters/static/README.md)
+2. Then, for each generated page it:
+   1. Parses the pages's HTML to get all the assets (js, images, and css) using [htmlparser2](https://github.com/fb55/htmlparser2)
+   2. Uses [esbuild](esbuild.github.io) to bundle all the js into a single [IIFE](https://en.wikipedia.org/wiki/Immediately_invoked_function_expression)
+   3. Inlines all assets into the HTML
+   4. Updates the plugin's `manifest.json` with the path to each page
+
+> **NOTE:**
+> Only `<script>`, `<img>`, and `<link>` tags will be processed
+> and they will **only** be inlined if their source is a local file.
 
 ## Intallation
 
