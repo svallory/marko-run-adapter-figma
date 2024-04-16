@@ -4,7 +4,7 @@ import createStaticAdapter from "@marko/run-adapter-static";
 import type { Adapter, Route } from "@marko/run/vite";
 import type { ResolvedConfig } from "vite";
 
-import { listHtmlFiles } from "./lib/listHtmlFiles";
+import { listHtmlFiles } from "./steps/listHtmlFiles";
 import { inlineAssets } from "./steps/inlineAssets";
 import type { FigmaAdapterOptions } from './types';
 
@@ -19,13 +19,6 @@ import type { FigmaAdapterOptions } from './types';
 export default function figmaAdapter(
   options: FigmaAdapterOptions = {}
 ): Adapter {
-  const defaultMinifierOptions = {
-    collapseWhitespace: true,
-    minifyCSS: true,
-    minifyJS: true,
-    removeAttributeQuotes: true,
-    removeComments: true,
-  };
 
   const staticAdapter = createStaticAdapter();
 
@@ -40,19 +33,6 @@ export default function figmaAdapter(
       builtEntries: string[],
       sourceEntries: string[]
     ): Promise<void> {
-      console.log({
-        resolvedConfig,
-        routes,
-        builtEntries,
-        sourceEntries,
-      });
-      // let fsWriter: fs.WriteStream | undefined;
-
-      // fsWriter = fs.createWriteStream("dist/index.html");
-      routes
-        .map((r) => ({ key: r.key, importPath: r.page?.importPath }))
-        .forEach((r) => console.log(r));
-
       await staticAdapter.buildEnd?.(
         resolvedConfig,
         routes,
@@ -60,34 +40,24 @@ export default function figmaAdapter(
         sourceEntries
       );
 
-      const outputDir = resolvedConfig.build.outDir;
-      const publicPath = path.resolve(outputDir, "../dist");
+      const outputDir = path.resolve(process.cwd(), resolvedConfig.build.outDir);
 
       const files =
         (await listHtmlFiles(outputDir).catch((error) =>
           console.error(error)
         )) || [];
 
-      console.log(
-        "Files to process:",
-        files.map((f) => path.relative(outputDir, f))
-      );
-
       // Inline CSS, JS, and images in HTML files
       for (const htmlPath of files) {
-        // const htmlPath = path.join(outputDir, `${route.entryName}.html`);
         if (!fs.existsSync(htmlPath)) continue;
-        console.log("html file: ", htmlPath);
-        //preciso buildar o javascript escolhido
+
         let htmlContent = await fs.promises.readFile(htmlPath, "utf-8");
-        htmlContent = await inlineAssets(htmlContent, publicPath);
-        // htmlContent = await minify(htmlContent, htmlMinifierOptions);
+        htmlContent = await inlineAssets(htmlContent, outputDir);
 
         await fs.promises.writeFile(htmlPath, htmlContent);
       }
 
       // Update Figma plugin manifest
-      const manifestPath = path.resolve(outputDir, "manifest.json");
       const originalManifestPath = path.resolve(process.cwd(), "manifest.json");
       if (fs.existsSync(originalManifestPath)) {
         // Read original manifest and prepare it for updates
@@ -97,11 +67,9 @@ export default function figmaAdapter(
 
         // Scan for HTML files and construct the ui property of the manifest
         const htmlFiles = files;
-        console.log("htmlFiles", htmlFiles);
+
         manifest.ui = htmlFiles.reduce(
           (ui, file) => {
-            // const key = path.basename(file, path.extname(file));
-            // console.log("key", key)
             const parts = file.split("/");
 
             // Locate the "about/index" part by slicing the relevant sections
@@ -112,22 +80,22 @@ export default function figmaAdapter(
             // Remove the file extension ".html"
             const key = aboutIndex.replace(".html", "");
             ui[key] = `${file}`;
-            console.log("ui", ui);
+
             return ui;
           },
           {} as Record<string, string>
         );
-        console.log("manifest.ui", manifest.ui);
+
         await fs.promises.writeFile(
-          manifestPath,
+          originalManifestPath,
           JSON.stringify(manifest, null, 2)
         );
       }
     },
 
-    typeInfo() {
-      return "{}";
-    },
+    // typeInfo() {
+    //   return "{}";
+    // },
   };
 
   return adapter;

@@ -1,16 +1,18 @@
 {
-  "name": "static-adapter",
-  "description": "The default Marko starter app",
-  "version": "1.0.0",
+  "name": "run-adapter-figma-playground",
+  "private": "true",
   "type": "module",
   "dependencies": {
-    "@marko/run-adapter-static": "^0.1.6",
     "marko": "^5.33.5"
   },
   "devDependencies": {
-    "@marko/run": "^0.4.3"
+    "@figma/plugin-typings": "^1.91.0",
+    "@marko-polo/run-adapter-figma": "../",
+    "@marko/run": "^0.4.3",
+    "@marko/run-adapter-static": "^0.1.6",
+    "eslint": "^9.0.0",
+    "vite": "^5.2.8"
   },
-  "private": true,
   "scripts": {
     "dev": "marko-run",
     "build": "marko-run build",

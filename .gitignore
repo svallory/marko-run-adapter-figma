@@ -126,3 +126,4 @@ coverage/
 /lib
 /mjs
 /umd
+dist

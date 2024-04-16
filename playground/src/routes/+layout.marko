@@ -8,8 +8,10 @@
   <title>${$global.meta.pageTitle || 'Marko'}</title>
   <link rel="stylesheet" href="/css/base.css">
   <script src="https://esm.sh/class-variance-authority@0.7.0"></script>
-  <script src="/js/static/script.js"></script>
-  <script src="/js/static/script2.js"></script>
+
+  <!-- path cannot be relative due to a bug in Marko Run -->
+  <script src="/js/script.js"></script>
+  <script src="/js/script2.js"></script>
 </head>
 <body>
   <${input.renderBody}/>

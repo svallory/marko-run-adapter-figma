@@ -1,6 +1,10 @@
+export interface Input {}
+
 <div.mouse-mask style=`--mouse-x:${state.x};--mouse-y:${state.y};`/>
 
 class {
+  declare state: { x: string, y: string };
+  declare boundMove: (e: MouseEvent) => void;
   onCreate() {
     this.state = { x: "center", y: "center" };
     this.boundMove = this.move.bind(this);
@@ -11,7 +15,7 @@ class {
   onDestroy() {
     window.removeEventListener("mousemove", this.boundMove);
   }
-  move(e) {
+  move(e: MouseEvent) {
     this.state.x = e.clientX + "px";
     this.state.y = e.clientY + "px";
   }

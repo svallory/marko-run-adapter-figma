@@ -1,6 +1,9 @@
-import fs from "node:fs";
-import path from "node:path";
-import { bundleJs } from "./bundleJs";
+import * as cheerio from 'cheerio';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { bundleJs } from './bundleJs';
+
+const urlRegex = /http?:\/\/[^\s]+/gi;
 
 /**
  * Inline CSS, JS, and images into the HTML content.
@@ -13,72 +16,70 @@ import { bundleJs } from "./bundleJs";
  * @param {string} publicPath - The public path where static assets are served from.
  * @returns {Promise<string>} - The HTML content with resources inlined.
  */
-export async function inlineAssets(
-  html: string,
-  publicPath: string
-): Promise<string> {
-  posthtml(options.plugins).process(code, options).then(handle)
+export async function inlineAssets(html: string, publicPath: string): Promise<string> {
 
+
+
+  const $ = cheerio.load(html);
+  const cssPromise = inlineCss($, publicPath)
+  const imgPromise = inlineImg($, publicPath)
+  const jsPromise = inlineJs($, publicPath)
   // Inline CSS files
-  const cssLinks = html.match(/<link\s+[^>]*?href=["']([^"']+?\.css)["'][^>]*?>/gi) || [];
-  for (const link of cssLinks) {
-    const hrefMatch = link.match(/href="(.+?\.css)"/);
-    console.log("cssLinks", hrefMatch);
-    if (!hrefMatch) continue;
-    const cssPath = path.join(publicPath, hrefMatch[1]);
-    const cssContent = await fs.promises.readFile(cssPath, "utf-8");
-    const styleTag = `<style>${cssContent}</style>`;
-    html = html.replace(link, () => styleTag);
+  
+  await Promise.allSettled([cssPromise, imgPromise, jsPromise])
+
+  return $.html()
+}
+
+async function inlineCss($: cheerio.CheerioAPI, publicPath: string) {
+  for (const element of $('link[href$=".css"]')) {
+    const link = $(element);
+    const href = link.attr('href') || '';
+    if (!urlRegex.test(href)) {
+      const cssPath = path.join(publicPath, href || '');
+      const cssContent = await fs.readFile(cssPath, { encoding: 'utf8' });
+      // console.log('Css Content', cssContent);
+      link.replaceWith(`<style>${cssContent}</style>`);
+    }
+  };
+}
+async function inlineImg($: cheerio.CheerioAPI, publicPath: string) {
+  for (const element of $('img')) {
+    const img = $(element);
+    const src = img.attr('src') || '';
+    if (!src.startsWith('data:')) {
+      const imgPath = path.join(publicPath, src);
+      const imgContent = await fs.readFile(imgPath);
+      const mimeType = path.extname(imgPath).slice(1);
+      const dataUri = `data:image/${mimeType};base64,${imgContent.toString('base64')}`;
+      img.attr('src', dataUri);
+    }
   }
-  // Inline images
-  const imgSrcs = html.match(/<img.*?src="(.+?)".*?>/g) || [];
-  for (const imgTag of imgSrcs) {
-    const imgSrcMatch = imgTag.match(/src="(.+?)"/);
-    if (!imgSrcMatch || imgSrcMatch[1].startsWith("data:")) continue;
-    const imgPath = path.join(publicPath, imgSrcMatch[1]);
-    const imgContent = await fs.promises.readFile(imgPath);
-    const mimeType = path.extname(imgPath).slice(1);
-    const dataUri = `data:image/${mimeType};base64,${imgContent.toString(
-      "base64"
-    )}`;
-    const inlineImgTag = imgTag.replace(
-      imgSrcMatch[0],
-      () => `src="${dataUri}"`
-    );
-    html = html.replace(imgTag, () => inlineImgTag);
-  }
+}
+async function inlineJs($: cheerio.CheerioAPI, publicPath: string) {
+  for (const element of $('script[src$=".js"]')) {
+    const script = $(element);
+    const src = script.attr('src') || '';
+    if (!urlRegex.test(src)) {
 
-  // Inline JS files
-  const jsScripts = html.match(
-    /<script async type="module".*?src="(.+?\.js)".*?>\s*<\/script>/g
-  ) || [];
+      const jsPath = path.join(publicPath, src || '');
 
-  for (const script of jsScripts) {
-    const srcMatch = script.match(/src="(.+?\.js)"/);
-    if (!srcMatch) continue;
+      const bundledJs = bundleJs(jsPath);
 
-    const jsPath = path.join(publicPath, srcMatch[1]);
+      const jsCode = `<script>${bundledJs}</script>`
 
-    const jsContent = await bundleJs(jsPath, "../out/bundled");
+      script.replaceWith(jsCode);
 
-    const inlineScript = `<script>${jsContent[0].code}</script>`;
+    }
 
-    console.log("-----------------CODE INLINE", inlineScript.length);
-
-    // console.log("REPLACING", script);
-    // console.log("HTML", html);
-    html = html.replace(script, () => inlineScript);
-
-    html = html.replace(
-      /<script async type="module".*?src="(.+?\.js)".*?>\s*<\/script>/g,
-      ""
-    );
-
-    html = html.replace(
-      /<link rel="modulepreload"\s+[^>]*?href=["']([^"']+?\.js)["'][^>]*?>/gi,
-      ""
-    );
   }
 
-  return html;
+  for (const element of $('link[rel="modulepreload"][href$=".js"]')) {
+    const link = $(element);
+    const href = link.attr('href') || '';
+    if (!urlRegex.test(href)) {
+      link.replaceWith(` `);
+    }
+  }
+
 }

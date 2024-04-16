@@ -1,0 +1,23 @@
+{
+  "name": "Marko Run Figma plugin",
+  "id": "9999999999",
+  "api": "1.0.0",
+  "main": "dist/code.js",
+  "ui": {
+    "about/index": "/Users/svallory/projects/cva-workspace/code/oss/marko/run-adpter-figma/playground/dist/about/index.html",
+    "dist/index": "/Users/svallory/projects/cva-workspace/code/oss/marko/run-adpter-figma/playground/dist/index.html"
+  },
+  "networkAccess": {
+    "allowedDomains": [
+      "https://marko-polo.github.io/"
+    ],
+    "reasoning": "To find awesome Marko tools."
+  },
+  "editorType": [
+    "figma"
+  ],
+  "permissions": [
+    "currentuser",
+    "teamlibrary"
+  ]
+}
